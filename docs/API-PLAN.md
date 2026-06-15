@@ -141,6 +141,52 @@ Flow:
 
 `DELETE /courses/{id}`
 
+## Teachers
+
+`GET /teachers`
+
+`POST /teachers`
+
+```json
+{
+  "organization_id": 1,
+  "name": "Teacher Name",
+  "email": "teacher@example.com",
+  "phone": "01000000001",
+  "password": "123456",
+  "role": "teacher",
+  "subject_ids": [1],
+  "grade_ids": [1]
+}
+```
+
+`GET /teachers/{id}`
+
+`PUT /teachers/{id}`
+
+`DELETE /teachers/{id}`
+
+## Students
+
+`GET /students`
+
+`POST /students`
+
+```json
+{
+  "organization_id": 1,
+  "grade_id": 1,
+  "name": "Student Name",
+  "phone": "01000000002",
+  "password": "123456",
+  "parent_phone": "01000000003"
+}
+```
+
+`GET /students/{id}`
+
+`PUT /students/{id}`
+
 ## Lessons
 
 `POST /lessons`
@@ -330,3 +376,62 @@ Flow:
 - Store payment
 - Credit organization wallet
 - Store wallet transaction
+
+### Payments
+
+`GET /payments`
+
+`POST /payments`
+
+```json
+{
+  "student_id": 5,
+  "course_id": 1,
+  "payment_method": "cash",
+  "status": "paid"
+}
+```
+
+`PUT /payments/{id}`
+
+```json
+{
+  "status": "refunded"
+}
+```
+
+### Wallets
+
+`GET /wallets`
+
+`GET /wallets/{id}`
+
+### Withdraw Requests
+
+`GET /withdraw-requests`
+
+`POST /withdraw-requests`
+
+```json
+{
+  "amount": 1000,
+  "notes": "Monthly withdrawal"
+}
+```
+
+`PUT /withdraw-requests/{id}`
+
+```json
+{
+  "status": "paid",
+  "notes": "Transferred"
+}
+```
+
+### Audit Logs
+
+`GET /audit-logs`
+
+Optional filter:
+
+`GET /audit-logs?action=student_created`
