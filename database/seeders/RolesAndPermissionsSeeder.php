@@ -44,16 +44,29 @@ class RolesAndPermissionsSeeder extends Seeder
             $role->syncPermissions($rolePermissions);
         }
 
+        $adminEmail = env('SUPER_ADMIN_EMAIL', 'admin@alsakhra.local');
+        $adminName = env('SUPER_ADMIN_NAME', 'Super Admin');
+        $adminPhone = env('SUPER_ADMIN_PHONE', '01000000000');
+        $adminPassword = env('SUPER_ADMIN_PASSWORD', 'password');
+
         $admin = User::query()->firstOrCreate(
-            ['email' => 'admin@alsakhra.local'],
+            ['email' => $adminEmail],
             [
-                'name' => 'Super Admin',
-                'phone' => '01000000000',
-                'password' => Hash::make('password'),
+                'name' => $adminName,
+                'phone' => $adminPhone,
+                'password' => Hash::make($adminPassword),
                 'role' => 'super_admin',
                 'status' => 'active',
             ]
         );
+
+        $admin->update([
+            'name' => $adminName,
+            'phone' => $adminPhone,
+            'password' => Hash::make($adminPassword),
+            'role' => 'super_admin',
+            'status' => 'active',
+        ]);
 
         $admin->assignRole('super_admin');
 
