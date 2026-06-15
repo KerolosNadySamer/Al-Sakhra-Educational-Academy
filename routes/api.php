@@ -1,14 +1,18 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\DeviceController;
 use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\LessonController;
 use App\Http\Controllers\Api\LessonFileController;
 use App\Http\Controllers\Api\OrganizationController;
+use App\Http\Controllers\Api\PaymentReceiptController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\RegistrationCodeController;
 use App\Http\Controllers\Api\StudentRegistrationController;
+use App\Http\Controllers\Api\VideoSecurityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -25,6 +29,7 @@ Route::post('/codes/validate', [RegistrationCodeController::class, 'validateCode
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/device/check', [DeviceController::class, 'check']);
 
     Route::middleware(['role:super_admin'])->prefix('admin')->group(function () {
         Route::apiResource('organizations', OrganizationController::class);
@@ -51,5 +56,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/questions/{question}', [QuestionController::class, 'destroy']);
 
         Route::get('/lesson-files/{lessonFile}/download', [LessonFileController::class, 'download']);
+        Route::get('/videos/{video}/signed-url', [VideoSecurityController::class, 'signedUrl']);
+
+        Route::get('/books', [BookController::class, 'index']);
+        Route::post('/books', [BookController::class, 'store'])->middleware('permission:manage_courses');
+        Route::post('/books/{book}/purchase', [BookController::class, 'purchase']);
+
+        Route::post('/payment-receipts', [PaymentReceiptController::class, 'store']);
+        Route::put('/payment-receipts/{paymentReceipt}', [PaymentReceiptController::class, 'update'])->middleware('permission:manage_payments');
     });
 });

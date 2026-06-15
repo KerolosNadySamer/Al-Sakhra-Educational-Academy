@@ -16,6 +16,8 @@ class LessonFile extends Model
         'title',
         'file_path',
         'allow_download',
+        'max_downloads',
+        'download_expiry_days',
         'download_limit',
         'expiry_days',
     ];

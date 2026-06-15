@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'video_signing' => [
+        'base_url' => env('VIDEO_STREAM_BASE_URL', 'https://video-domain.com'),
+        'secret' => env('VIDEO_SIGNING_SECRET', env('APP_KEY')),
+    ],
+
 ];

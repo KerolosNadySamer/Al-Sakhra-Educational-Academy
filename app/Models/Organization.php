@@ -53,4 +53,9 @@ class Organization extends Model
     {
         return $this->hasMany(Contract::class);
     }
+
+    public function books(): HasMany
+    {
+        return $this->hasMany(Book::class);
+    }
 }

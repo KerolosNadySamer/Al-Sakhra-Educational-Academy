@@ -59,7 +59,7 @@ class AuthController extends Controller
             return;
         }
 
-        $maxDevices = 1;
+        $maxDevices = 2;
         $device = $user->devices()->where('device_identifier', $data['device_identifier'])->first();
 
         if (! $device && $user->devices()->where('is_active', true)->count() >= $maxDevices) {

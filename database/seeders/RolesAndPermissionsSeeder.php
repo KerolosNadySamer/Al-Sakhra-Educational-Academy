@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\PaymentMethod;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -55,5 +56,18 @@ class RolesAndPermissionsSeeder extends Seeder
         );
 
         $admin->assignRole('super_admin');
+
+        $methods = [
+            ['name' => 'Paymob', 'provider' => 'paymob'],
+            ['name' => 'Vodafone Cash', 'provider' => 'vodafone_cash'],
+            ['name' => 'Instapay', 'provider' => 'instapay'],
+        ];
+
+        foreach ($methods as $method) {
+            PaymentMethod::query()->firstOrCreate(
+                ['provider' => $method['provider']],
+                ['name' => $method['name'], 'is_active' => true]
+            );
+        }
     }
 }

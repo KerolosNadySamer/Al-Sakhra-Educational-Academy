@@ -204,6 +204,8 @@ Checks:
 - `download_limit`
 - `expiry_days`
 - Existing `file_downloads` record
+- `max_downloads`
+- `download_expiry_days`
 
 Response:
 
@@ -214,6 +216,104 @@ Response:
   "download": {}
 }
 ```
+
+## Video Security
+
+`GET /videos/{id}/signed-url`
+
+Returns a short-lived stream URL:
+
+```json
+{
+  "provider": "bunny",
+  "expires_in": 300,
+  "stream_url": "https://video-domain.com/video/123.m3u8?token=...&expires=..."
+}
+```
+
+The backend checks enrollment before issuing the URL. Configure:
+
+```env
+VIDEO_STREAM_BASE_URL=https://video-domain.com
+VIDEO_SIGNING_SECRET=
+```
+
+## Device Management
+
+`POST /device/check`
+
+```json
+{
+  "device_name": "Chrome Windows",
+  "device_identifier": "unique-device-id",
+  "max_devices": 2
+}
+```
+
+The API allows the first two active devices by default and rejects the third.
+
+## Books Store
+
+### List Books
+
+`GET /books`
+
+### Create Book
+
+`POST /books`
+
+```json
+{
+  "organization_id": 1,
+  "title": "Math Sheet",
+  "description": "PDF book",
+  "pdf_file": "books/math.pdf",
+  "price": 100,
+  "status": "active"
+}
+```
+
+### Purchase Book
+
+`POST /books/{id}/purchase`
+
+```json
+{
+  "payment_id": 1
+}
+```
+
+## Payment Receipts
+
+`POST /payment-receipts`
+
+```json
+{
+  "payment_id": 1,
+  "payment_method_id": 1,
+  "receipt_path": "receipts/1.png",
+  "transaction_reference": "TX-123"
+}
+```
+
+`PUT /payment-receipts/{id}`
+
+```json
+{
+  "status": "approved",
+  "notes": "Verified"
+}
+```
+
+## Audit Logs
+
+Important actions write to `audit_logs`, including:
+
+- Device check
+- Video signed URL creation
+- PDF download
+- Book creation and purchase
+- Payment receipt create/update
 
 ## Wallet And Payments
 

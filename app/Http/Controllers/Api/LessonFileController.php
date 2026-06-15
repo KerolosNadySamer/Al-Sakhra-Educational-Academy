@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\FileDownload;
 use App\Models\LessonFile;
+use App\Services\AuditLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LessonFileController extends Controller
 {
-    public function download(Request $request, LessonFile $lessonFile): JsonResponse
+    public function download(Request $request, LessonFile $lessonFile, AuditLogService $auditLogService): JsonResponse
     {
         $user = $request->user();
         $lessonFile->load('lesson.course');
@@ -35,16 +36,20 @@ class LessonFileController extends Controller
             ['download_count' => 0, 'first_download_at' => now()]
         );
 
-        if ($download->download_count >= $lessonFile->download_limit) {
+        $maxDownloads = $lessonFile->max_downloads ?? $lessonFile->download_limit;
+        $expiryDays = $lessonFile->download_expiry_days ?? $lessonFile->expiry_days;
+
+        if ($download->download_count >= $maxDownloads) {
             abort(403, 'Download limit exceeded.');
         }
 
-        if ($download->first_download_at && $download->first_download_at->copy()->addDays($lessonFile->expiry_days)->isPast()) {
+        if ($download->first_download_at && $download->first_download_at->copy()->addDays($expiryDays)->isPast()) {
             abort(403, 'Download period expired.');
         }
 
         $download->increment('download_count');
         $download->update(['last_download_at' => now()]);
+        $auditLogService->record($request, 'student_downloaded_pdf', $lessonFile, ['download_count' => $download->download_count + 1]);
 
         return response()->json([
             'message' => 'Download allowed.',
